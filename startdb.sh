@@ -1,0 +1,1 @@
+docker run --rm --detach --name mongodb --publish 27017:27017 --volume mongo-database:/data/db mongo:latest
