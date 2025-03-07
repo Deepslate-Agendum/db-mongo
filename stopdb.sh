@@ -1,3 +1,3 @@
-CONTAINER_NAME=agendum-database
+source .env
 
 docker stop "$CONTAINER_NAME"
