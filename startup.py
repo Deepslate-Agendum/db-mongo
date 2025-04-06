@@ -13,6 +13,33 @@ def createDefaultTaskType():
     )
     tag_value_type.save()
 
+    # create a Manner Value Type
+    manner_value_type = ValueType(
+        name="Manner",
+        allowed_values=[]
+    )
+    manner_value_type.save()
+
+    # create Blocking and Subtask Fields using Manner Value Type
+    blocking_field = Field(
+        name = "Blocking",
+        min_values = 1,
+        max_values = 1,
+        default_allowed_value = None,
+        value_type = manner_value_type
+    )
+    blocking_field.save()
+
+    subtask_field = Field(
+        name = "Subtask",
+        min_values = 1,
+        max_values = 1,
+        default_allowed_value = None,
+        value_type = manner_value_type
+    )
+    subtask_field.save()
+
+
     # create default ValueTypes: string and user
     string_value_type = ValueType(
         name="String",
