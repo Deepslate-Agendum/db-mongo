@@ -1,4 +1,4 @@
-from db_python_util.db_classes import TaskType, Field, ValueType, User
+from db_python_util.db_classes import TaskType, Field, ValueType, AllowedValue
 from db_python_util.db_helper import ConnectionManager
 
 
@@ -21,23 +21,20 @@ def createDefaultTaskType():
     manner_value_type.save()
 
     # create Blocking and Subtask Fields using Manner Value Type
-    blocking_field = Field(
-        name = "Blocking",
-        min_values = 1,
-        max_values = 1,
-        default_allowed_value = None,
-        value_type = manner_value_type
+    blocking_manner = AllowedValue(
+        value="Blocking",
+        value_type=manner_value_type,
     )
-    blocking_field.save()
+    blocking_manner.save()
 
-    subtask_field = Field(
-        name = "Subtask",
-        min_values = 1,
-        max_values = 1,
-        default_allowed_value = None,
-        value_type = manner_value_type
+    subtask_manner = AllowedValue(
+        value="Subtask",
+        value_type=manner_value_type,
     )
-    subtask_field.save()
+    subtask_manner.save()
+
+    manner_value_type.allowed_values = [blocking_manner, subtask_manner]
+    manner_value_type.save()
 
 
     # create default ValueTypes: string and user
