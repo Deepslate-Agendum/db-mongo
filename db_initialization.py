@@ -78,10 +78,26 @@ def createDefaultTaskType():
         default_allowed_value=None,
         value_type=string_value_type,
     )
+    x_location_system_field = Field(
+        name="X Location",
+        min_values=0,
+        max_values=1,
+        default_allowed_value=None,
+        value_type=string_value_type
+    )
+    y_location_system_field = Field(
+        name="Y Location",
+        min_values=0,
+        max_values=1,
+        default_allowed_value=None,
+        value_type=string_value_type
+    )
     name_system_field.save()
     assignee_system_field.save()
     description_system_field.save()
     due_date_system_field.save()
+    x_location_system_field.save()
+    y_location_system_field.save()
 
     # create default task type
     default_task_type = TaskType(
@@ -92,6 +108,8 @@ def createDefaultTaskType():
             assignee_system_field,
             description_system_field,
             due_date_system_field,
+            x_location_system_field,
+            y_location_system_field
         ],
         static_field_values=[],
         workspaces=[],
