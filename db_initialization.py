@@ -1,4 +1,4 @@
-from db_python_util.db_classes import TaskType, Field, ValueType, User
+from db_python_util.db_classes import TaskType, Field, ValueType, AllowedValue
 from db_python_util.db_helper import ConnectionManager
 
 
@@ -12,6 +12,30 @@ def createDefaultTaskType():
         allowed_values=[]
     )
     tag_value_type.save()
+
+    # create a Manner Value Type
+    manner_value_type = ValueType(
+        name="Manner",
+        allowed_values=[]
+    )
+    manner_value_type.save()
+
+    # create Blocking and Subtask Fields using Manner Value Type
+    blocking_manner = AllowedValue(
+        value="Blocking",
+        value_type=manner_value_type,
+    )
+    blocking_manner.save()
+
+    subtask_manner = AllowedValue(
+        value="Subtask",
+        value_type=manner_value_type,
+    )
+    subtask_manner.save()
+
+    manner_value_type.allowed_values = [blocking_manner, subtask_manner]
+    manner_value_type.save()
+
 
     # create default ValueTypes: string and user
     string_value_type = ValueType(
@@ -54,10 +78,26 @@ def createDefaultTaskType():
         default_allowed_value=None,
         value_type=string_value_type,
     )
+    x_location_system_field = Field(
+        name="X Location",
+        min_values=0,
+        max_values=1,
+        default_allowed_value=None,
+        value_type=string_value_type
+    )
+    y_location_system_field = Field(
+        name="Y Location",
+        min_values=0,
+        max_values=1,
+        default_allowed_value=None,
+        value_type=string_value_type
+    )
     name_system_field.save()
     assignee_system_field.save()
     description_system_field.save()
     due_date_system_field.save()
+    x_location_system_field.save()
+    y_location_system_field.save()
 
     # create default task type
     default_task_type = TaskType(
@@ -68,6 +108,8 @@ def createDefaultTaskType():
             assignee_system_field,
             description_system_field,
             due_date_system_field,
+            x_location_system_field,
+            y_location_system_field
         ],
         static_field_values=[],
         workspaces=[],
