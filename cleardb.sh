@@ -1,3 +1,3 @@
-VOLUME_NAME="agendum-database-volume"
+source .env
 
 docker volume rm "$VOLUME_NAME"
