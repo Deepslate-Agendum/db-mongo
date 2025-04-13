@@ -2,6 +2,27 @@ from db_python_util.db_classes import TaskType, Field, ValueType, AllowedValue
 from db_python_util.db_helper import ConnectionManager
 
 
+def create_enum(enum_name, value_names):
+    value_type = ValueType(
+        name=enum_name,
+        allowed_values=[],
+    )
+    value_type.save()
+
+    values = []
+    for value_name in value_names:
+        value = AllowedValue(
+            value=value_name,
+            value_type=value_type,
+        )
+        value.save()
+        values.append(value)
+
+    value_type.update(allowed_values=values)
+    value_type.save()
+
+    return value_type, values
+
 # function that creates the default task type and saves it to the database
 @ConnectionManager.requires_connection
 def createDefaultTaskType():
@@ -13,28 +34,7 @@ def createDefaultTaskType():
     )
     tag_value_type.save()
 
-    # create a Manner Value Type
-    manner_value_type = ValueType(
-        name="Manner",
-        allowed_values=[]
-    )
-    manner_value_type.save()
-
-    # create Blocking and Subtask Fields using Manner Value Type
-    blocking_manner = AllowedValue(
-        value="Blocking",
-        value_type=manner_value_type,
-    )
-    blocking_manner.save()
-
-    subtask_manner = AllowedValue(
-        value="Subtask",
-        value_type=manner_value_type,
-    )
-    subtask_manner.save()
-
-    manner_value_type.allowed_values = [blocking_manner, subtask_manner]
-    manner_value_type.save()
+    manner_type, (blocking_manner, subtask_manner) = create_enum("Manner", ["Blocking", "Subtask"])
 
 
     # create default ValueTypes: string and user
