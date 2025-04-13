@@ -36,6 +36,7 @@ def createDefaultTaskType():
 
     manner_type, (blocking_manner, subtask_manner) = create_enum("Manner", ["Blocking", "Subtask"])
 
+    status_type, (incomplete_status, in_progress_status, complete_status) = create_enum("Status", ["Incomplete", "In Progress", "Complete"])
 
     # create default ValueTypes: string and user
     string_value_type = ValueType(
