@@ -1,42 +1,15 @@
 from db_python_util.db_classes import TaskType, Field, ValueType, AllowedValue
-from db_python_util.db_helper import ConnectionManager
+from db_python_util.db_helper import ConnectionManager, create_enum
 
-
-def create_enum(enum_name, value_names):
-    value_type = ValueType(
-        name=enum_name,
-        allowed_values=[],
-    )
-    value_type.save()
-
-    values = []
-    for value_name in value_names:
-        value = AllowedValue(
-            value=value_name,
-            value_type=value_type,
-        )
-        value.save()
-        values.append(value)
-
-    value_type.update(allowed_values=values)
-    value_type.save()
-
-    return value_type, values
 
 # function that creates the default task type and saves it to the database
 @ConnectionManager.requires_connection
 def createDefaultTaskType():
+    tag_value_type, tags = create_enum("Tag", [])
 
-    # create a Tag Value Type
-    tag_value_type = ValueType(
-        name="Tag",
-        allowed_values=[]
-    )
-    tag_value_type.save()
+    manner_type, manners = create_enum("Manner", ["Blocking", "Subtask"])
 
-    manner_type, (blocking_manner, subtask_manner) = create_enum("Manner", ["Blocking", "Subtask"])
-
-    status_type, (incomplete_status, in_progress_status, complete_status) = create_enum("Status", ["Incomplete", "In Progress", "Complete"])
+    status_type, statuses = create_enum("Status", ["Not Started", "In Progress", "Complete"])
 
     # create default ValueTypes: string and user
     string_value_type = ValueType(
@@ -93,12 +66,25 @@ def createDefaultTaskType():
         default_allowed_value=None,
         value_type=string_value_type
     )
+    tags_system_field = Field(
+        name="Tags",
+        min_values=0,
+        value_type=tag_value_type,
+    )
+    status_system_field = Field(
+        name="Status",
+        min_values=1,
+        max_values=1,
+        value_type=status_type,
+    )
     name_system_field.save()
     assignee_system_field.save()
     description_system_field.save()
     due_date_system_field.save()
     x_location_system_field.save()
     y_location_system_field.save()
+    tags_system_field.save()
+    status_system_field.save()
 
     # create default task type
     default_task_type = TaskType(
@@ -110,7 +96,9 @@ def createDefaultTaskType():
             description_system_field,
             due_date_system_field,
             x_location_system_field,
-            y_location_system_field
+            y_location_system_field,
+            tags_system_field, # TODO: unlike other fields, static tags should be combined rather than overriden (but static fields in general are out of scope right now)
+            status_system_field,
         ],
         static_field_values=[],
         workspaces=[],
